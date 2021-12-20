@@ -603,13 +603,20 @@ public class Controller {
 		user_reg_status_label.setText(fullname);
 	}
 	
-	public Boolean userExists(User u) throws Exception
+	public void validateUser(User u) throws UserAlreadyExistsException
 	{
-		Vector<User> users = dh.get_users();
-		for(int i = 0; i < users.size(); i++)
+		Vector<User> users = null;
+		try {
+			users = dh.get_users();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		for(int i = 0; i < users.size(); i++) {
 			if(u.getUser_name().compareTo(users.get(i).getUser_name()) == 0)
-				return true;
-		return false;
+			{
+				throw new UserAlreadyExistsException("Username already in use");
+			}
+		}
 	}
 	
 	@FXML
@@ -639,21 +646,21 @@ public class Controller {
 			{
 				User user = new User();
 				user.setUser(username, pass, fullname, phonenumber);
-				try {
-					if(userExists(user) == false)
-					{
-						try {
-							dh.save_user(user);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-						controller.set_user_registration_status_label("Registration Status: Success");
+				
+				try
+				{
+					validateUser(user);
+					try {
+						dh.save_user(user);
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-					else
-						controller.set_user_registration_status_label("Registration Status: Fail");
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					controller.set_user_registration_status_label("Registration Status: Success");
+				}
+				catch (Exception e)
+				{
 					e.printStackTrace();
+					controller.set_user_registration_status_label("Registration Status: Fail");
 				}
 			}
 			stage = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();

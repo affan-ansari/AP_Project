@@ -60,10 +60,10 @@ public class MySQLHandler extends DataHandler
 	@Override
 	User get_user(String username) throws IOException, Exception 
 	{
-		Configuration con = new Configuration();
-		con.configure("hibernate.cfg.xml").addAnnotatedClass(User.class);
-		SessionFactory sf = con.buildSessionFactory();
-		Session session = sf.openSession();
+//		Configuration con = new Configuration();
+//		con.configure("hibernate.cfg.xml").addAnnotatedClass(User.class);
+//		SessionFactory sf = con.buildSessionFactory();
+		Session session = this.sf.openSession();
 		Transaction trans = session.beginTransaction();
 
 		User u = session.get(User.class, username);
